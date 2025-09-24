@@ -12,7 +12,19 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.QuanLyDiemRenLuyen">
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.UpdateScoreActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.StudentScoreActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.ManageStudentsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.AdminActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
