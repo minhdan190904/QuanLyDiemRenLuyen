@@ -1,33 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:padding="24dp"
-    android:gravity="center"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#F5F5F5"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <ImageView
+        android:id="@+id/imgLogo"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_marginBottom="12dp"
+        android:contentDescription="App Logo"
+        android:src="@drawable/ic_logo_app" />
+
+    <TextView
+        android:id="@+id/txtAppName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:text="Quản lý điểm rèn luyện"
+        android:textColor="#333333"
+        android:textSize="20sp"
+        android:textStyle="bold" />
 
     <EditText
         android:id="@+id/edtUser"
-        android:hint="Username"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:background="@drawable/bg_edittext"
+        android:drawablePadding="8dp"
+        android:hint="Tên đăng nhập"
+        android:padding="12dp" />
 
     <EditText
         android:id="@+id/edtPass"
-        android:hint="Password"
-        android:inputType="textPassword"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/bg_edittext"
+        android:drawablePadding="8dp"
+        android:hint="Mật khẩu"
+        android:inputType="textPassword"
+        android:padding="12dp" />
 
     <Button
         android:id="@+id/btnLogin"
-        android:text="Đăng nhập"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:backgroundTint="#1976D2"
+        android:text="Đăng nhập"
+        android:textAllCaps="false"
+        android:textColor="#FFFFFF" />
 
     <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:paddingTop="8dp"
         android:text="Admin: admin/admin  •  SV mẫu: sv001/123"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:textColor="#666666"
+        android:textSize="12sp" />
 </LinearLayout>

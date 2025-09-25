@@ -2,83 +2,112 @@ package com.trilogy.quanlydiemrenluyen.ui;
 
 import android.database.Cursor;
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
+import android.os.Handler;
+import android.os.Looper;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.View;
 import android.widget.EditText;
-import android.widget.ListView;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.appbar.MaterialToolbar;
 import com.trilogy.quanlydiemrenluyen.R;
+import com.trilogy.quanlydiemrenluyen.adapter.StudentPickAdapter;
 import com.trilogy.quanlydiemrenluyen.db.DatabaseHelper;
+import com.trilogy.quanlydiemrenluyen.model.Student;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public class StudentScoreActivity extends AppCompatActivity {
-    DatabaseHelper db;
+public class StudentScoreActivity extends AppCompatActivity implements StudentPickAdapter.OnStudentClick {
 
-    EditText edtKey;
-    TextView tvName, tvId, tvClazz;
-    ListView list;
-    ArrayList<String> rows = new ArrayList<>();
-    ArrayAdapter<String> adapter;
+    private DatabaseHelper db;
+    private StudentPickAdapter adapter;
+    private EditText edtSearch;
+    private TextView tvEmpty;
+    private ImageView imageViewBack;
+
+    private final Handler handler = new Handler(Looper.getMainLooper());
+    private Runnable searchRunnable;
+    private static final long DEBOUNCE_MS = 300L;
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_student_score);
+
         db = new DatabaseHelper(this);
 
-        edtKey = findViewById(R.id.edtKey);
-        Button btnFind = findViewById(R.id.btnFind);
-        tvName = findViewById(R.id.tvName);
-        tvId = findViewById(R.id.tvId);
-        tvClazz = findViewById(R.id.tvClazz);
-        list = findViewById(R.id.listScores);
-        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, rows);
-        list.setAdapter(adapter);
 
-        String sidFromLogin = getIntent().getStringExtra("student_id");
-        if (!TextUtils.isEmpty(sidFromLogin)) {
-            // Ẩn ô tìm kiếm, hiển thị trực tiếp
-            edtKey.setText(sidFromLogin);
-            edtKey.setEnabled(false);
-            loadStudentAndScores(sidFromLogin);
-        }
+        RecyclerView rv = findViewById(R.id.recycler);
+        rv.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new StudentPickAdapter(this);
+        rv.setAdapter(adapter);
 
-        btnFind.setOnClickListener(v -> {
-            String key = edtKey.getText().toString().trim();
-            String sid = db.findStudentIdByNameOrId(key);
-            if (sid == null) {
-                Toast.makeText(this, "Không tìm thấy sinh viên", Toast.LENGTH_SHORT).show();
-            } else {
-                loadStudentAndScores(sid);
+        edtSearch = findViewById(R.id.edtSearch);
+        tvEmpty = findViewById(R.id.tvEmpty);
+        imageViewBack = findViewById(R.id.imageViewBack);
+
+        imageViewBack.setOnClickListener(v -> finish());
+
+        edtSearch.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // no-op (we debounce in afterTextChanged)
+            }
+            @Override public void afterTextChanged(Editable s) {
+                final String k = s == null ? "" : s.toString().trim();
+                if (searchRunnable != null) handler.removeCallbacks(searchRunnable);
+                searchRunnable = () -> load(k.isEmpty() ? null : k);
+                handler.postDelayed(searchRunnable, DEBOUNCE_MS);
             }
         });
+
+        load(null);
     }
 
-    private void loadStudentAndScores(String sid) {
-        // info
-        try (Cursor c = db.getStudentInfo(sid)) {
-            if (c.moveToFirst()) {
-                tvId.setText(c.getString(c.getColumnIndexOrThrow("student_id")));
-                tvName.setText(c.getString(c.getColumnIndexOrThrow("name")));
-                tvClazz.setText(c.getString(c.getColumnIndexOrThrow("clazz")));
+    private void load(String keyword) {
+        List<Student> list = new ArrayList<>();
+        try (Cursor c = db.getStudents(keyword)) {
+            while (c.moveToNext()) {
+                Student s = new Student();
+                s.student_id = c.getString(c.getColumnIndexOrThrow("student_id"));
+                s.name      = c.getString(c.getColumnIndexOrThrow("name"));
+                s.clazz     = c.getString(c.getColumnIndexOrThrow("clazz"));
+                list.add(s);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        adapter.submit(list);
+        tvEmpty.setVisibility(list.isEmpty() ? View.VISIBLE : View.GONE);
+    }
+
+    @Override public void onViewScore(Student s) {
+        List<String> rows = new ArrayList<>();
+        try (Cursor c = db.getScoresByStudent(s.student_id)) {
+            while (c.moveToNext()) {
+                String sem  = c.getString(0);
+                int score   = c.getInt(1);
+                String note = c.getString(2);
+                String time = c.getString(3);
+                rows.add(sem + " — " + score + (note == null || note.isEmpty() ? "" : (" ("+note+")")) + " • " + time);
             }
         }
-        // scores
-        rows.clear();
-        try (Cursor c2 = db.getScoresByStudent(sid)) {
-            while (c2.moveToNext()) {
-                String sem = c2.getString(0);
-                int score = c2.getInt(1);
-                String note = c2.getString(2);
-                String time = c2.getString(3);
-                rows.add(sem + " - " + score + (TextUtils.isEmpty(note) ? "" : (" (" + note + ")")) + " • " + time);
-            }
+        if (rows.isEmpty()) {
+            Toast.makeText(this, "SV chưa có bản ghi điểm", Toast.LENGTH_SHORT).show();
+            return;
         }
-        adapter.notifyDataSetChanged();
+        new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Điểm rèn luyện\n" + s.student_id + " - " + s.name + " (" + s.clazz + ")")
+                .setItems(rows.toArray(new CharSequence[0]), null)
+                .setPositiveButton("Đóng", null)
+                .show();
     }
 }

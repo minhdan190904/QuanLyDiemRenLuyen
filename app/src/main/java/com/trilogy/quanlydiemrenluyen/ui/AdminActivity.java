@@ -3,6 +3,7 @@ package com.trilogy.quanlydiemrenluyen.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -15,10 +16,14 @@ public class AdminActivity extends AppCompatActivity {
 
         Button btnManage = findViewById(R.id.btnManageStudents);
         Button btnUpdate = findViewById(R.id.btnUpdateScore);
-        Button btnView = findViewById(R.id.btnViewScore);
+        Button btnView   = findViewById(R.id.btnViewScore);
+        Button btnManageClasses = findViewById(R.id.btnManageClasses);
+        ImageView btnBack = findViewById(R.id.imageViewBack);
 
         btnManage.setOnClickListener(v -> startActivity(new Intent(this, ManageStudentsActivity.class)));
         btnUpdate.setOnClickListener(v -> startActivity(new Intent(this, UpdateScoreActivity.class)));
         btnView.setOnClickListener(v -> startActivity(new Intent(this, StudentScoreActivity.class)));
+        btnManageClasses.setOnClickListener(v -> startActivity(new Intent(this, ManageClassesActivity.class)));
+        btnBack.setOnClickListener(v -> finish());
     }
 }

@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.QuanLyDiemRenLuyen">
         <activity
+            android:name=".ui.ManageClassesActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.UpdateScoreActivity"
             android:exported="false" />
         <activity

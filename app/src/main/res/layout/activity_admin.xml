@@ -1,26 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:padding="24dp"
-    android:gravity="center"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F5F5F5">
 
-    <Button
-        android:id="@+id/btnManageStudents"
-        android:text="Quản lý sinh viên"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="56dp"
+        android:background="#1976D2"
+        android:padding="8dp">
 
-    <Button
-        android:id="@+id/btnUpdateScore"
-        android:text="Cập nhật điểm (theo tên/MSSV)"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        <ImageView
+            android:id="@+id/imageViewBack"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentStart="true"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="8dp"
+            android:src="@drawable/back_icon"
+            android:contentDescription="@null"
+            app:tint="#FFFFFF" />
 
-    <Button
-        android:id="@+id/btnViewScore"
-        android:text="Xem điểm sinh viên"
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Quản trị hệ thống"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:layout_centerInParent="true"/>
+    </RelativeLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="20dp"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/btnManageStudents"
+            style="@style/App.Button"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="Quản lý sinh viên"
+            android:layout_marginBottom="12dp"/>
+
+        <Button
+            android:id="@+id/btnUpdateScore"
+            style="@style/App.Button"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="Cập nhật điểm (theo học kỳ)"
+            android:layout_marginBottom="12dp"/>
+
+        <Button
+            android:id="@+id/btnViewScore"
+            style="@style/App.Button"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="Xem điểm sinh viên"
+            android:layout_marginBottom="12dp"/>
+
+        <Button
+            android:id="@+id/btnManageClasses"
+            style="@style/App.Button"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="Quản lý lớp"/>
+    </LinearLayout>
 </LinearLayout>
